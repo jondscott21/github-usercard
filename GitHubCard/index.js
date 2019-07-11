@@ -64,40 +64,41 @@ const cards = document.querySelector('.cards');
 // .then(data => {
 //   console.log(data.data);
 //   let apiData = data.data;
-//   cards.appendChild(cardCreator(apiData.avatar_url, apiData.name, apiData.login, apiData.location, apiData.html_url, apiData.followers, apiData.following));
+//   cards.appendChild(cardCreator(apiData));
 // }))
 
 // .catch(error => {
 //   console.log(error)
 // })
 
+
+//making a GET request for all of my followers
 axios.get(`https://api.github.com/users/jondscott21/followers`)
 .then(data => {
-  // grabbing follower apit urls and putting them into an array to iterate over
+  // grabbing follower api urls and putting them into an array to iterate over
   const peopleArray = []
   let apiData = data.data;
   apiData.forEach(follower => {
     peopleArray.push(follower.url)
 
   })
-  // making a get request for all follower urls
+  // making a GET request for all follower urls
   peopleArray.forEach(friend => axios.get(friend)
     .then(followerList => {
       // pushing each follower object into an array for iteration
-      apiPage = []
+      let apiPage = []
       apiPage.push(followerList.data)
-      console.log(apiPage)
       apiPage.forEach(person => {
-        console.log(person)
-        cards.appendChild(cardCreator(person.avatar_url, person.name, person.login, person.location, person.html_url, person.followers, person.following));
+        cards.appendChild(cardCreator(person));
       })
     }))
 })
+// Checks for errors on api grab
 .catch(error => {
-  console.log(error)
+  console.log("we didn't get our data", error)
 })
 
-function cardCreator(imgUrl, nameData, usernameData, locationData, githubLink, followerData, followingData) {
+function cardCreator(data) {
   // Creating card elements
   const card = document.createElement('div');
   const img = document.createElement('img');
@@ -110,23 +111,27 @@ function cardCreator(imgUrl, nameData, usernameData, locationData, githubLink, f
   const followers = document.createElement('p');
   const following = document.createElement('p');
   const bio = document.createElement('p');
+  const button = document.createElement('button');
 
   // Adding classes to elements
   card.classList.add('card');
   cardInfo.classList.add('card-info');
   name.classList.add('name')
   username.classList.add('username')
+  button.classList.add('button')
 
   //Adding textContent to elements
-  img.src = imgUrl;
-  name.textContent = `${nameData}`;
-  username.textContent = `${usernameData}`;
-  location.textContent = `${locationData}`;
+  img.src = data.avatar_url;
+  name.textContent = `${data.name}`;
+  username.textContent = `${data.login}`;
+  location.textContent = `${data.location}`;
   profile.textContent = `Profile: `;
-  webAddress.href = `${githubLink}`;
-  webAddress.textContent = `Profile: ${githubLink}`;
-  followers.textContent = `Followers: ${followerData}`
-  following.textContent = `Following: ${followingData}`
+  webAddress.href = `${data.html_url}`;
+  webAddress.textContent = `${data.html_url}`;
+  followers.textContent = `Followers: ${data.followers}`
+  following.textContent = `Following: ${data.following}`
+  button.textContent = `Close`;
+  
 
   // Adding html structure
   card.append(img);
@@ -139,6 +144,21 @@ function cardCreator(imgUrl, nameData, usernameData, locationData, githubLink, f
   cardInfo.append(followers);
   cardInfo.append(following);
   cardInfo.append(bio);
+  cardInfo.append(button);
+
+  //adding event listener for button
+  button.addEventListener('click', event => {
+    console.log('clicked')
+    card.classList.toggle('close')
+    button.classList.toggle('btn-close')
+    img.classList.toggle('content-hidden')
+    name.classList.toggle('content-hidden')
+    if(button.classList[1] === "btn-close") {
+      button.textContent = `Expand`;
+    } else {
+      button.textContent = `Close`
+    }
+  })
   
   return card;
 }
