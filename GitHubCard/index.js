@@ -24,7 +24,10 @@
           user, and adding that card to the DOM.
 */
 
-const followersArray = [];
+const followersArray = [`https://api.github.com/users/jondscott21`, `https://api.github.com/Bigorange8801/`, 
+  `https://api.github.com/users/leananepari`, `https://api.github.com/users/paintedlbird7`, 
+  `https://api.github.com/users/cmstexas`, `https://api.github.com/users/sethnadu`, 
+  `https://api.github.com/users/davindar`];
 
 /* Step 3: Create a function that accepts a single object as its only argument,
           Using DOM methods and properties, create a component that will return the following DOM element:
@@ -54,19 +57,19 @@ const followersArray = [];
   bigknell
 */
 
-
-axios.get('https://api.github.com/users/jondscott21')
+const cards = document.querySelector('.cards');
+followersArray.forEach(link => axios.get(link)
 .then(data => {
   console.log(data.data);
-})
+  let apiData = data.data;
+  cards.appendChild(cardCreator(apiData.avatar_url, apiData.name, apiData.login, apiData.location, apiData.html_url, apiData.followers, apiData.following));
+}))
+
 .catch(error => {
   console.log(error)
 })
 
-const cards = document.querySelector('.cards');
-cards.appendChild(cardCreator())
-
-function cardCreator() {
+function cardCreator(imgUrl, nameData, usernameData, locationData, githubLink, followerData, followingData) {
   // Creating card elements
   const card = document.createElement('div');
   const img = document.createElement('img');
@@ -80,21 +83,34 @@ function cardCreator() {
   const following = document.createElement('p');
   const bio = document.createElement('p');
 
+  // Adding classes to elements
+  card.classList.add('card');
+  cardInfo.classList.add('card-info');
+  name.classList.add('name')
+  username.classList.add('username')
+
+  //Adding textContent to elements
+  img.src = imgUrl;
+  name.textContent = `${nameData}`;
+  username.textContent = `${usernameData}`;
+  location.textContent = `${locationData}`;
+  profile.textContent = `Profile: `;
+  webAddress.href = `${githubLink}`;
+  webAddress.textContent = `Profile: ${githubLink}`;
+  followers.textContent = `Followers: ${followerData}`
+  following.textContent = `Following: ${followingData}`
+
   // Adding html structure
   card.append(img);
   card.append(cardInfo);
   cardInfo.append(name);
   cardInfo.append(username);
   cardInfo.append(location);
+  profile.append(webAddress);
   cardInfo.append(profile);
   cardInfo.append(followers);
   cardInfo.append(following);
   cardInfo.append(bio);
-  profile.append(webAddress);
-
-  // Adding classes to elements
-  card.classList.add('card')
-  cardInfo.classList.add('card-info')
-
+  
   return card;
 }
