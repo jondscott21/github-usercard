@@ -53,3 +53,48 @@ const followersArray = [];
   luishrd
   bigknell
 */
+
+
+axios.get('https://api.github.com/users/jondscott21')
+.then(data => {
+  console.log(data.data);
+})
+.catch(error => {
+  console.log(error)
+})
+
+const cards = document.querySelector('.cards');
+cards.appendChild(cardCreator())
+
+function cardCreator() {
+  // Creating card elements
+  const card = document.createElement('div');
+  const img = document.createElement('img');
+  const cardInfo = document.createElement('div');
+  const name = document.createElement('h3');
+  const username = document.createElement('p');
+  const location = document.createElement('p');
+  const profile = document.createElement('p');
+  const webAddress = document.createElement('a');
+  const followers = document.createElement('p');
+  const following = document.createElement('p');
+  const bio = document.createElement('p');
+
+  // Adding html structure
+  card.append(img);
+  card.append(cardInfo);
+  cardInfo.append(name);
+  cardInfo.append(username);
+  cardInfo.append(location);
+  cardInfo.append(profile);
+  cardInfo.append(followers);
+  cardInfo.append(following);
+  cardInfo.append(bio);
+  profile.append(webAddress);
+
+  // Adding classes to elements
+  card.classList.add('card')
+  cardInfo.classList.add('card-info')
+
+  return card;
+}
