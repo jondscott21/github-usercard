@@ -58,13 +58,41 @@ const followersArray = [`https://api.github.com/users/jondscott21`, `https://api
 */
 
 const cards = document.querySelector('.cards');
-followersArray.forEach(link => axios.get(link)
-.then(data => {
-  console.log(data.data);
-  let apiData = data.data;
-  cards.appendChild(cardCreator(apiData.avatar_url, apiData.name, apiData.login, apiData.location, apiData.html_url, apiData.followers, apiData.following));
-}))
 
+// call from a local array
+// followersArray.forEach(link => axios.get(link)
+// .then(data => {
+//   console.log(data.data);
+//   let apiData = data.data;
+//   cards.appendChild(cardCreator(apiData.avatar_url, apiData.name, apiData.login, apiData.location, apiData.html_url, apiData.followers, apiData.following));
+// }))
+
+// .catch(error => {
+//   console.log(error)
+// })
+
+axios.get(`https://api.github.com/users/jondscott21/followers`)
+.then(data => {
+  // grabbing follower apit urls and putting them into an array to iterate over
+  const peopleArray = []
+  let apiData = data.data;
+  apiData.forEach(follower => {
+    peopleArray.push(follower.url)
+
+  })
+  // making a get request for all follower urls
+  peopleArray.forEach(friend => axios.get(friend)
+    .then(followerList => {
+      // pushing each follower object into an array for iteration
+      apiPage = []
+      apiPage.push(followerList.data)
+      console.log(apiPage)
+      apiPage.forEach(person => {
+        console.log(person)
+        cards.appendChild(cardCreator(person.avatar_url, person.name, person.login, person.location, person.html_url, person.followers, person.following));
+      })
+    }))
+})
 .catch(error => {
   console.log(error)
 })
